@@ -2,6 +2,4 @@
 .Rhistory
 .RData
 .Ruserdata
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+*.pdf
