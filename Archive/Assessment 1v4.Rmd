@@ -1,0 +1,409 @@
+---
+title: 'Crime in Chicago: Data Analysis and Visualizations using R'
+author: '201081646'
+output:
+  word_document:
+    fig_caption: yes
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+# load libraries
+library(ggplot2)
+library(ggmap)
+library(lubridate)
+library(scales)
+library(zoo)
+```
+
+# Introduction
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+# load libraries
+library(ggplot2)
+library(ggmap)
+library(lubridate)
+library(scales)
+library(zoo)
+library(dplyr)
+```
+
+# Introduction
+
+This is the first assessment for the **Statistical Theory and Methods module**. 
+
+Its objective is to: 
+
+- Summarise a sample of dataset.
+
+- Highlight key finding.
+
+# Data and methods
+
+The dataset we use is a random sample of 500,000 rows of the original data which come from https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2.
+
+```{r eval=TRUE, echo=TRUE}
+# read csv in R
+dd=read.csv("http://www1.maths.leeds.ac.uk/~charles/math5741/crime.csv",header=T)
+```
+
+Explain that all the code is in an appendix.
+
+Also that this report has been done with Rmarkdown.
+
+# Results
+
+## Data preparation
+
+First, we have a look at the variables we got.
+
+```{r, echo=TRUE}
+names(dd)
+```
+
+We are interested in 8 of them: 
+- `Date`,
+- `Primary.Type`, 
+- `Location.Description`,
+- `Arrest`,
+- `Domestic`, 
+- `District`.
+
+Due to time limitation and lenght constraint. WE focus on some of them and drop the rest of them.
+
+```{r, include=FALSE}
+# Drop all variables we are not interested in
+dd <- dd[, -c(1:2, 4:5, 7, 11, 13:18)]
+```
+
+Secondly, we clean the dataser of missing values - drop the NAs.
+
+```{r, include=FALSE}
+# Remove missing values
+dd <- dd[complete.cases(dd),]
+```
+
+Third, we create new variables:
+- `count`,
+- `hour`, 
+- `Month_Yr`,
+- `Month`,
+- `weekday`). 
+
+And we give them the right format for explotation.
+
+```{r, include=FALSE}
+# Create a variable count with value 1
+dd$count <- 1
+
+# Convert Date from factor to date
+dd$Date <- mdy_hms(dd$Date)
+
+# Extract hour from Date
+dd$hour <- substring(dd$Date, 12,13)
+
+# Drop time from Date
+dd$Date <- as.Date(dd$Date, format="%m/%d/%Y")
+
+# Create a month year
+dd$Month_Yr <- format(as.Date(dd$Date), "%Y-%m")
+
+# Extract month - the mon component of a POSIXlt object is the numeric month (0-11 starting on January)
+dd$mon <- as.POSIXlt(dd$Date)$mon
+# Convert weekday from character to factor
+dd$mon <- c("January", "February", "March", "April", "May", "June", "July", "Agust", "September", "October", "November", "Desember")[as.POSIXlt(dd$Date)$mon + 1]
+
+# Extract weekdays - the wday component of a POSIXlt object is the numeric weekday (0-6 starting on Sunday)
+dd$weekday <- as.POSIXlt(dd$Date)$wday
+dd$weekday <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", 
+    "Friday", "Saturday")[as.POSIXlt(dd$Date)$wday + 1]
+```
+
+```{r, include=FALSE}
+# convert all variables in factor
+dd$hour <- as.factor(dd$hour)
+dd$Month_Yr <- as.Date(as.yearmon(dd$Month_Yr, "%Y-%m"))
+dd$mon <- as.factor(dd$mon)
+dd$weekday <- as.factor(dd$weekday)
+dd$Primary.Type <- as.factor(dd$Primary.Type)
+dd$Location.Description <- as.factor(dd$Location.Description)
+dd$District<- as.factor(dd$District)
+```
+
+We group labels of variables type and location of accidents in bigger categories.
+
+Then we manually groups `Primery.Type` categories. 
+
+```{r, include=FALSE}
+# Group Primary.Type categories
+dd$Type_grouped[dd$Primary.Type == "THEFT" | dd$Primary.Type == "MOTOR VEHICLE THEFT" ] <- "Theft"
+
+dd$Type_grouped[dd$Primary.Type == "BATTERY"] <- "Batery"
+
+dd$Type_grouped[dd$Primary.Type == "CRIMINAL DAMAGE"] <- "Criminal damage"
+
+dd$Type_grouped[dd$Primary.Type == "NARCOTICS" | dd$Primary.Type == "OTHER NARCOTIC VIOLATION"] <- "Narcotics"
+
+dd$Type_grouped[dd$Primary.Type == "OTHER OFFENSE"] <- "Other offense"
+
+dd$Type_grouped[dd$Primary.Type == "ASSAULT"] <- "Assault"
+
+dd$Type_grouped[dd$Primary.Type == "BURGLARY"] <- "Burglary"
+
+dd$Type_grouped[dd$Primary.Type == "ROBBERY" ] <- "Robery"
+
+dd$Type_grouped[dd$Primary.Type == "DECEPTIVE PRACTICE"] <- "Deceptive practice"
+
+dd$Type_grouped[dd$Primary.Type == "ARSON" | dd$Primary.Type == "CONCEALED CARRY LICENSE VIOLATION" | dd$Primary.Type == "CRIMINAL TRESPASS" | dd$Primary.Type == "GAMBLINGS" | dd$Primary.Type == "HUMAN TRAFFICKING" | dd$Primary.Type == "INTERFERENCE WITH PUBLIC OFFICER" | dd$Primary.Type == "INTIMIDATION" | dd$Type == "KIDNAPPING" | dd$Type == "LIQUOR LAW VIOLATION" | dd$Primary.Type == "NON-CRIMINAL" | dd$Primary.Type == "NON - CRIMINAL" | dd$Primary.Type == "OBSCENITY" | dd$Primary.Type == "OFFENSE INVOLVING CHILDREN"| dd$Primary.Type == "PROSTITUTION"| dd$Primary.Type == "PUBLIC INDECENCY"| dd$Primary.Type == "PUBLIC PEACE VIOLATION"| dd$Primary.Type == "STALKING"| dd$Primary.Type == "WEAPONS VIOLATION"| dd$Primary.Type == "HOMICIDE"| dd$Primary.Type == "CRIM SEXUAL ASSAULT" | dd$Primary.Type == "SEX OFFENSE"] <- "Others"
+
+table(dd$Type_grouped)
+```
+
+We do the same with `Location.Description`.
+
+```{r, include=FALSE}
+# Group Location.Description categories
+dd$Location_grouped[dd$Location.Description == "\"SCHOOL- PRIVATE- BUILDING\"" | dd$Location.Description ==  "\"SCHOOL- PRIVATE- GROUNDS\"" | dd$Location.Description == "\"SCHOOL- PUBLIC- BUILDING\"" | dd$Location.Description == "\"SCHOOL- PUBLIC- GROUNDS\"" | dd$Location.Description == "COLLEGE/UNIVERSITY GROUNDS" | dd$Location.Description == "COLLEGE/UNIVERSITY RESIDENCE HALL"| dd$Location.Description == "SCHOOL YARD"]<- "School or university"
+
+dd$Location_grouped[dd$Location.Description == "" | dd$Location.Description == "ABANDONED BUILDING"| dd$Location.Description == "AIRCRAFT" | dd$Location.Description == "ANIMAL HOSPITAL" | dd$Location.Description == "ATHLETIC CLUB" | dd$Location.Description == "AUTO" | dd$Location.Description == "BASEMENT"  | dd$Location.Description == "BOAT/WATERCRAFT" | dd$Location.Description == "CHA GROUNDS" | dd$Location.Description == "CHA HALLWAY"  | dd$Location.Description == "CHA HALLWAY/STAIRWELL/ELEVATOR" | dd$Location.Description == "CHURCH" | dd$Location.Description == "CHURCH/SYNAGOGUE/PLACE OF WORSHIP"| dd$Location.Description == "COIN OPERATED MACHINE"| dd$Location.Description == "CONSTRUCTION SITE"| dd$Location.Description == "OTHER"| dd$Location.Description == "CHURCH"| dd$Location.Description == "OTHER RAILROAD PROP / TRAIN DEPOT" | dd$Location.Description =="SEWER" | dd$Location.Description =="STAIRWELL"| dd$Location.Description == "VACANT LOT" | dd$Location.Description =="VACANT LOT/LAND"| dd$Location.Description == "VESTIBULE" | dd$Location.Description =="WOODED AREA" | dd$Location.Description == "CTA STATION" | dd$Location.Description == "CTA BUS STOP"| dd$Location.Description == "CTA TRACKS - RIGHT OF WAY"  | dd$Location.Description == "AIRPORT BUILDING NON-TERMINAL - NON-SECURE AREA" | dd$Location.Description == "AIRPORT BUILDING NON-TERMINAL - SECURE AREA" | dd$Location.Description == "AIRPORT EXTERIOR - NON-SECURE AREA" | dd$Location.Description == "AIRPORT EXTERIOR - SECURE AREA" | dd$Location.Description == "AIRPORT PARKING LOT" | dd$Location.Description ==  "AIRPORT TERMINAL LOWER LEVEL - NON-SECURE AREA" | dd$Location.Description == "AIRPORT TERMINAL LOWER LEVEL - SECURE AREA" | dd$Location.Description == "AIRPORT TERMINAL MEZZANINE - NON-SECURE AREA"| dd$Location.Description == "AIRPORT TERMINAL UPPER LEVEL - NON-SECURE AREA"| dd$Location.Description == "AIRPORT TERMINAL UPPER LEVEL - SECURE AREA"| dd$Location.Description == "AIRPORT TRANSPORTATION SYSTEM (ATS)"| dd$Location.Description == "AIRPORT VENDING ESTABLISHMENT" | dd$Location.Description == "AIRPORT/AIRCRAFT" |dd$Location.Description == "DAY CARE CENTER"| dd$Location.Description == "COMMERCIAL / BUSINESS OFFICE"| dd$Location.Description == "FACTORY" | dd$Location.Description =="FACTORY/MANUFACTURING BUILDING" | dd$Location.Description =="FEDERAL BUILDING"| dd$Location.Description == "FIRE STATION"| dd$Location.Description == "GOVERNMENT BUILDING/PROPERTY"| dd$Location.Description == "HOSPITAL"| dd$Location.Description == "HOSPITAL BUILDING/GROUNDS"| dd$Location.Description == "JAIL / LOCK-UP FACILITY"| dd$Location.Description == "LIBRARY"| dd$Location.Description == "MOVIE HOUSE/THEATER"  | dd$Location.Description =="NURSING HOME/RETIREMENT HOME"| dd$Location.Description == "POOL ROOM" | dd$Location.Description =="SPORTS ARENA/STADIUM"| dd$Location.Description == "WAREHOUSE" | dd$Location.Description == "BANK"| dd$Location.Description == "CREDIT UNION"| dd$Location.Description == "CURRENCY EXCHANGE"| dd$Location.Description == "SAVINGS AND LOAN"]<- "Others"
+
+dd$Location_grouped[dd$Location.Description == "ALLEY" | dd$Location.Description == "BOWLING ALLEY" | dd$Location.Description == "CHA BREEZEWAY" | dd$Location.Description =="HALLWAY"]<- "Alley" 
+
+dd$Location_grouped[dd$Location.Description == "APARTMENT"| dd$Location.Description == "CHA APARTMENT"]<- "Apartment"
+
+dd$Location_grouped[dd$Location.Description == "APPLIANCE STORE" | dd$Location.Description == "BARBERSHOP" | dd$Location.Description == "CAR WASH" | dd$Location.Description == "CLEANING STORE" | dd$Location.Description ==  "CONVENIENCE STORE" | dd$Location.Description =="DEPARTMENT STORE" | dd$Location.Description =="DRUG STORE"| dd$Location.Description == "GARAGE/AUTO REPAIR"| dd$Location.Description == "GAS STATION"| dd$Location.Description == "GAS STATION DRIVE/PROP." | dd$Location.Description =="GROCERY FOOD STORE"| dd$Location.Description == "MEDICAL/DENTAL OFFICE" | dd$Location.Description =="NEWSSTAND"| dd$Location.Description == "OFFICE"| dd$Location.Description == "PAWN SHOP" | dd$Location.Description =="RETAIL STORE"| dd$Location.Description == "SMALL RETAIL STORE"]<- "Store/small business"
+
+dd$Location_grouped[dd$Location.Description == "ATM (AUTOMATIC TELLER MACHINE)" | dd$Location.Description == "BRIDGE"| dd$Location.Description == "DRIVEWAY"| dd$Location.Description == "GANGWAY"| dd$Location.Description == "HIGHWAY/EXPRESSWAY"| dd$Location.Description == "LAKEFRONT/WATERFRONT/RIVERBANK"| dd$Location.Description == "SIDEWALK" | dd$Location.Description == "STREET"]<- "Street"
+
+dd$Location_grouped[dd$Location.Description == "BAR OR TAVERN"| dd$Location.Description == "HOTEL"| dd$Location.Description == "HOTEL/MOTEL"| dd$Location.Description == "RESTAURANT"| dd$Location.Description == "TAVERN"| dd$Location.Description == "TAVERN/LIQUOR STORE"]<- "Restaurant/bar/hotel"
+
+dd$Location_grouped[dd$Location.Description == "CHA PARKING LOT" | dd$Location.Description =="PARK PROPERTY" | dd$Location.Description =="PARKING LOT"| dd$Location.Description == "PARKING LOT/GARAGE(NON.RESID.)" | dd$Location.Description =="POLICE FACILITY/VEH PARKING LOT"]<- "Parking lot"
+
+dd$Location_grouped[dd$Location.Description == "TRAILER" | dd$Location.Description == "TRUCK" | dd$Location.Description == "VEHICLE - DELIVERY TRUCK"| dd$Location.Description ==  "VEHICLE - OTHER RIDE SERVICE"| dd$Location.Description ==  "VEHICLE NON-COMMERCIAL" | dd$Location.Description == "VEHICLE-COMMERCIAL" | dd$Location.Description == "CTA BUS" | dd$Location.Description =="DELIVERY TRUCK" | dd$Location.Description =="TAXICAB" | dd$Location.Description == "CTA TRAIN" | dd$Location.Description == "OTHER COMMERCIAL TRANSPORTATION"]<- "Vehicle" 
+
+dd$Location_grouped[dd$Location.Description == "CTA GARAGE / OTHER PROPERTY" | dd$Location.Description =="DRIVEWAY - RESIDENTIAL" | dd$Location.Description =="GARAGE" | dd$Location.Description =="HOUSE" | dd$Location.Description == "PORCH" | dd$Location.Description =="RESIDENCE" | dd$Location.Description == "RESIDENCE PORCH/HALLWAY"| dd$Location.Description == "RESIDENCE-GARAGE"| dd$Location.Description == "RESIDENTIAL YARD (FRONT/BACK)"| dd$Location.Description == "YARD"]<- "Residence"
+
+table(dd$Location_grouped)
+```
+
+Finally, we show the data prepared for explotation.
+
+```{r, echo=TRUE}
+head(dd[dd$VAR1==4,],6)
+```
+
+## Data exploration
+
+This section explores the data visually to identify the key patterns.
+
+### Univariable analysis
+
+#### Evolution crime 
+
+Apint each of the lines in different colour.
+
+```{r, include=FALSE}
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  require(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+
+It´s too similar to kaggle. Try using arrents. Maybe not analysing the evlution per each.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Plot the graph 
+ggplot(dd, aes(x=Month_Yr))+geom_line(stat="count") + labs(y = "Number of crimes") + theme(axis.title.x=element_blank())
+
+# Create a graph with each type evolution
+p1 <- ggplot(subset(dd, Type_grouped == "Assault"), aes(x=Month_Yr))+geom_line(stat="count", colour="red")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p2 <- ggplot(subset(dd, Type_grouped == "Batery"), aes(x=Month_Yr))+geom_line(stat="count", colour="#000199")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p3 <- ggplot(subset(dd, Type_grouped == "Burglary"), aes(x=Month_Yr))+geom_line(stat="count", colour="yellow")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p4 <- ggplot(subset(dd, Type_grouped == "Criminal damage"), aes(x=Month_Yr))+geom_line(stat="count", colour="green")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p5 <- ggplot(subset(dd, Type_grouped == "Deceptive practice"), aes(x=Month_Yr))+geom_line(stat="count", colour="grey")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p6 <- ggplot(subset(dd, Type_grouped == "Narcotics"), aes(x=Month_Yr))+geom_line(stat="count", colour="pink")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p7 <- ggplot(subset(dd, Type_grouped == "Other offense"), aes(x=Month_Yr))+geom_line(stat="count", colour="blue")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p8 <- ggplot(subset(dd, Type_grouped == "Others"), aes(x=Month_Yr))+geom_line(stat="count", colour="magenta")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p9 <- ggplot(subset(dd, Type_grouped == "Robery"), aes(x=Month_Yr))+geom_line(stat="count", colour="orange")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+p10 <- ggplot(subset(dd, Type_grouped == "Theft"), aes(x=Month_Yr))+geom_line(stat="count", colour="brown")+
+  theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, cols=2)
+```
+
+Order all the maps from more to less.
+
+#### Records by time
+
+##### Hour
+
+```{r, echo=FALSE}
+# Plot the graph 
+ggplot(dd, aes(x=hour))+geom_bar(stat="count")+
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Hour", y = "Number of crimes") + coord_flip()
+```
+
+##### Weekday - Order days
+
+```{r, echo=FALSE}
+# Plot the graph 
+ggplot(dd, aes(x=weekday))+geom_bar(stat="count")+
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Day", y = "Number of crimes") + coord_flip()
+```
+
+##### Month - Order months
+
+```{r, echo=FALSE}
+# Plot the graph 
+ggplot(dd, aes(x=mon))+ geom_bar(stat="count") +
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Month", y = "Number of crimes") + coord_flip()
+```
+
+#### Type of crimes
+
+```{r, echo=FALSE}
+# Plot the graph 
+ggplot(dd, aes(x=Type_grouped))+ geom_bar(stat="count") +
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Month", y = "Number of crimes") + coord_flip()
+```
+
+#### Location of crimes
+
+```{r, echo=FALSE}
+# Plot the graph 
+ggplot(dd, aes(x=Location_grouped))+ geom_bar(stat="count") +
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Month", y = "Number of crimes") + coord_flip()
+```
+
+#### Crimes per districts (map?)
+
+```{r, include=FALSE}
+# Remove values districts 21 and 31
+dd_sub <- subset(dd, District!="21" & District!="31")
+```
+
+```{r, echo=FALSE}
+# Plot the graph 
+ggplot(dd_sub, aes(x=District))+ geom_bar(stat="count") +
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Month", y = "Number of crimes") + coord_flip()
+```
+
+### Two variables analysis
+
+#### Hour vs Type of crime
+
+```{r, echo=FALSE}
+# add variable: performance
+count_h <- aggregate(count ~ Type_grouped + hour, data = dd, FUN = sum)
+
+p1 <- ggplot(data = count_h, aes(x = hour, y = Type_grouped)) + geom_tile(aes(fill = count), color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  ylab("Crime") +
+  xlab("Location") +
+  theme(legend.title = element_text(size = 10),
+        legend.text = element_text(size = 12),
+        plot.title = element_text(size=16),
+        axis.title=element_text(size=14,face="bold"),
+        axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(fill = "Number of crimes")
+p1
+```
+
+#### District vs Type of crimes
+
+```{r, echo=FALSE}
+# add variable: performance
+count_d <- aggregate(count ~ Type_grouped + District, data = dd_sub, FUN = sum)
+
+p2<-ggplot(data = count_d, aes(x = District, y = Type_grouped)) +
+  geom_tile(aes(fill = count), color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  ylab("Crime") +
+  xlab("District") +
+  theme(legend.title = element_text(size = 10),
+        legend.text = element_text(size = 12),
+        plot.title = element_text(size=16),
+        axis.title=element_text(size=14,face="bold"),
+        axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(fill = "Number of crimes")
+p2
+```
+
+#### Location vs Type of crimes
+
+```{r, echo=FALSE}
+# add variable: performance
+count_l <- aggregate(count ~ Type_grouped + Location_grouped, data = dd, FUN = sum)
+
+p3 <- ggplot(data = count_l, aes(x = Location_grouped, y = Type_grouped)) + geom_tile(aes(fill = count), color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  ylab("Crime") +
+  xlab("Location") +
+  theme(legend.title = element_text(size = 10),
+        legend.text = element_text(size = 12),
+        plot.title = element_text(size=16),
+        axis.title=element_text(size=14,face="bold"),
+        axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(fill = "Number of crimes")
+p3
+```
+
+# Discussion
+
+# Conclusions
+
+# Code Appendix
+
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+```

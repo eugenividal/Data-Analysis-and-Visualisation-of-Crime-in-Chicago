@@ -1,0 +1,267 @@
+---
+title: 'Crime in Chicago: Data Analysis and Visualizations using R'
+author: '201081646'
+output:
+  word_document:
+    fig_caption: yes
+    keep_md: yes
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r, message=FALSE, warning=FALSE}
+# load libraries
+library(ggplot2)
+library(ggmap)
+library(lubridate)
+library(scales)
+library(zoo)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE)
+```
+
+# Introduction
+
+This is the first assessment for the **Statistical Theory and Methods module**. 
+
+# Objective
+
+The objective is to: 
+
+- Summarise a sample of dataset.
+
+- Highlight key finding.
+
+# Data and methods
+
+The dataset we use is a random sample of 500,000 rows of the orginial data which come from https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2.
+
+```{r eval=TRUE, include=FALSE}
+# read csv in R
+dd=read.csv("http://www1.maths.leeds.ac.uk/~charles/math5741/crime.csv",header=T)
+```
+
+# Results
+
+## Data preparation
+
+### Look at the data
+
+First, we have a look at the data.
+
+```{r}
+names(dd)
+```
+
+### Data cleaning
+
+We drop all the variables we are not interested.
+
+Interesting and fesiable variables: 
+- Date
+- Type (need to aggregate data) 
+- Location
+- Arrest 
+- Domestic 
+- (beat, district, area or ward), 
+- lat, lon.
+
+```{r}
+# Drop all variables we are not interested
+dd <- dd[, -c(1:2, 4:5, 7, 11, 13:15)]
+```
+
+Altohugh depending on the study we could do with the missing data. here to make it easier we will drop the data which are NA.
+
+```{r}
+# Remove missing values
+dd <- dd[complete.cases(dd),]
+```
+
+#### Data transformation
+
+```{r}
+# Create a variable count with value 1
+dd$count <- 1
+
+# Convert starttime from factor to date
+dd$Date <- mdy_hms(dd$Date)
+
+# Extract hour from datetime value
+dd$hour <- substring(dd$Date, 12,13)
+
+# Only date
+dd$Date <- as.Date(dd$Date, format="%m/%d/%Y")
+
+# Extract month - the mon component of a POSIXlt object is the numeric month (0-11 starting on January)
+#dd$mon <- as.POSIXlt(dd$Date)$mon
+# Convert weekday from character to factor
+#dd$mon <- c("January", "February", "March", "April", "May", "June", "July", "Agust", "September", "October", "November", "Desember")[as.POSIXlt(dd$Date)$mon + 1]
+
+# Create a month number of the year variable
+dd$Month_Yr <- format(as.Date(dd$Date), "%Y-%m")
+dd$Month_Yr <- as.Date(as.yearmon(dd$Month_Yr, "%Y-%m"))
+
+# Extract weekdays - the wday component of a POSIXlt object is the numeric weekday (0-6 starting on Sunday)
+dd$weekday <- as.POSIXlt(dd$Date)$wday
+dd$weekday <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", 
+    "Friday", "Saturday")[as.POSIXlt(dd$Date)$wday + 1]
+```
+
+```{r}
+# convert all variables in factor
+dd$hour <- as.factor(dd$hour)
+dd$Month_Yr <- as.factor(dd$Month_Yr)
+dd$weekday <- as.factor(dd$weekday)
+dd$Location.Description <- as.factor(dd$Location.Description)
+dd$District<- as.factor(dd$District)
+```
+
+Do the same but with location. Order the 10 most important. Justify also the thing done before with this - The 10 most important.
+
+```{r}
+# create a list with most frequent types of crime
+temp <- row.names(as.data.frame(summary(dd$Primary.Type, max=20))) # create a df or something else with the summary output.
+dd$Primary.Type <- as.character(dd$Primary.Type) # IMPORTANT! Here was the problem: turn into character values
+# create new column that filters top results
+dd$top_type <- ifelse(
+        dd$Primary.Type %in% temp,
+        dd$Primary.Type,
+        "OTHER")
+dd$top_type <- as.factor(dd$top_type) # factorize the output again
+# plot
+ggplot(dd,aes(x= factor(top_type, levels=names(sort(table(top_type),increasing=TRUE))))) + geom_bar() + coord_flip()
+```
+
+```{r}
+# create a list with most frequent locations
+temp2 <- row.names(as.data.frame(summary(dd$Location.Description, max=20))) 
+dd$Location.Description <- as.character(dd$Location.Description)
+# create new column that filters top results
+dd$top_location <- ifelse(
+        dd$Location.Description %in% temp2,
+        dd$Location.Description,
+        "OTHER")
+dd$top_location <- as.factor(dd$top_location) # factorize the output again
+# plot
+ggplot(dd,aes(x= factor(top_location, levels=names(sort(table(top_location),increasing=TRUE))))) + geom_bar() + coord_flip()
+```
+
+```{r}
+dd$Type_grouped[dd$Primary.Type == "THEFT" | dd$Primary.Type == "MOTOR VEHICLE THEFT" ] <- "Theft"
+dd$Type_grouped[dd$Primary.Type == "BATTERY"] <- "Batery"
+dd$Type_grouped[dd$Primary.Type == "CRIMINAL DAMAGE"] <- "Criminal damage"
+dd$Type_grouped[dd$Primary.Type == "NARCOTICS" | dd$Primary.Type == "OTHER NARCOTIC VIOLATION"] <- "Narcotics"
+dd$Type_grouped[dd$Primary.Type == "OTHER OFFENSE"] <- "Other offense"
+dd$Type_grouped[dd$Primary.Type == "ASSAULT"] <- "Assault"
+dd$Type_grouped[dd$Primary.Type == "BURGLARY"] <- "Burglary"
+dd$Type_grouped[dd$Primary.Type == "ROBBERY" ] <- "Robery"
+dd$Type_grouped[dd$Primary.Type == "DECEPTIVE PRACTICE"] <- "Deceptive practice"
+dd$Type_grouped[dd$Primary.Type == "CRIM SEXUAL ASSAULT" | dd$Primary.Type == "SEX OFFENSE"] <- "Sexual crimes"
+dd$Type_grouped[dd$Primary.Type == "HOMICIDE"] <- "Homicide"
+dd$Type_grouped[dd$Primary.Type == "ARSON" | dd$Primary.Type == "CONCEALED CARRY LICENSE VIOLATION" | dd$Primary.Type == "CRIMINAL TRESPASS" | dd$Primary.Type == "GAMBLINGS" | dd$Primary.Type == "HUMAN TRAFFICKING" | dd$Primary.Type == "INTERFERENCE WITH PUBLIC OFFICER" | dd$Primary.Type == "INTIMIDATION" | dd$Type == "KIDNAPPING" | dd$Type == "LIQUOR LAW VIOLATION" | dd$Primary.Type == "NON-CRIMINAL" | dd$Primary.Type == "NON - CRIMINAL" | dd$Primary.Type == "OBSCENITY" | dd$Primary.Type == "OFFENSE INVOLVING CHILDREN"| dd$Primary.Type == "PROSTITUTION"| dd$Primary.Type == "PUBLIC INDECENCY"| dd$Primary.Type == "PUBLIC PEACE VIOLATION"| dd$Primary.Type == "STALKING"| dd$Primary.Type == "WEAPONS VIOLATION"] <- "Others"
+```
+
+```{r}
+# aggregate the data
+#aggr <- aggregate(count ~ Beat + District, data = dd, FUN = sum)
+# plot boxplot.
+#p1 <- ggplot(aggr, aes(x= District, y = count)) + geom_boxplot() 
+#p1 
+```
+
+## Data exploration
+
+This section explores the data visually to identify the key patterns.
+
+### Graphs
+
+Evolution of crime in Chicago per day/see just year
+
+```{r}
+# Plot the graph 
+count2 = aggregate(count ~ Month_Yr, data = dd, FUN = sum)
+ 
+ggplot(count2, aes(x = Month_Yr, y= count, group = 1)) +
+         geom_line() +
+         labs(x = "Date", y = "Count")  + 
+  stat_smooth(
+  color = "#FC4E07", fill = "#FC4E07",
+  method = "loess"
+  ) #Add trend smoothed line
+```
+
+```{r}
+# Plot the graph 
+ggplot(dd, aes(x=Month_Yr, fill= Arrest))+geom_line(stat="count")+
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(x = "Date", y = "Count")+ scale_fill_discrete(name = "Arrest", labels=c("True", "False"))
+
+```
+
+```{r}
+# Plot the graph 
+ggplot(dd, aes(x=hour, fill= Arrest))+geom_bar(stat="count")+
+  xlab("mon")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(x = "Hour", y = "Trip Count") + scale_fill_discrete(name = "Arrest", labels=c("True", "False"))+ ggtitle("Number of crimes per month")
+```
+
+Evolution per type of crime. Small graphs different colours per crime.
+
+```{r}
+# Plot the graph 
+ggplot(data= dd, aes(x= hour, fill= Domestic)) + geom_bar(stat="count") +
+  xlab ("Hour") + theme (axis.text.x = element_text(angle = 90, hjust = 2))
+```
+
+# Location and description 
+
+Per areas.
+
+```{r}
+# Plot the graph 
+ggplot(data= dd, aes(x= District, fill= Arrest)) + geom_bar(stat="count") 
+```
+
+### records by time, type and location
+
+### Temporal analysis of crime rates by type and location
+
+Analysis of an speficic crime and map it.
+
+### Maps
+
+Create tematic maps:
+
+one per nomber of crimes
+per type of crime
+
+
+```{r warning=FALSE}
+# Fetch Boundary Specified Map
+lat <- c(42.0,41.7)
+long <- c(-87.8, -87.5) 
+bbox <- make_bbox(long,lat,f=0.05)
+b <- get_map(bbox,maptype="toner-lite",source="stamen")
+```
+
+```{r}
+pp <- dd[dd$Type_grouped == "Homicide",]
+```
+
+```{r}
+ggmap(b) + geom_point(data = pp, 
+           aes(Longitude,Latitude,color=Year),size=0.5,alpha=0.7) +
+           labs(x = "Longitude", y = "Latitude",
+           title="Homicides", color = "Year")
+```
+
+
+
+# Discussion
+
+# Conclusions
+
+# References
+
