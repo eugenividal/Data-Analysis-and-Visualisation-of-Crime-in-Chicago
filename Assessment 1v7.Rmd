@@ -1,26 +1,19 @@
 ---
-title: 'Chicago Crime Data Analysis'
-author: 'Student ID: 201081646'
+title: "Chicago Crime Data Analysis"
+author: "Student ID:/ 201081646"
 date: "November 3, 2018"
 output:
-  pdf_document: 
+  pdf_document:
     fig_caption: yes
-    fig_crop: no
-    fig_height: 2
-    fig_width: 3
-    highlight: haddock
+    fig_height: 2.5
+    fig_width: 5
     keep_tex: yes
     number_sections: yes
-    toc_depth: 2
-  html_document:
-    fig_caption: yes
-    theme: journal
-    toc: yes
-    toc_depth: 2
-header-includes: 
-- \usepackage{graphicx}
-- \usepackage{float}
 ---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 # load libraries
@@ -30,38 +23,25 @@ library(lubridate)
 library(scales)
 library(zoo)
 library(dplyr)
-library(knitr)
 ```
 
-```{r echo=FALSE,warning=FALSE}
-  opts_chunk$set(fig.path='figure/graphics-', 
-                 cache.path='cache/graphics-', 
-                 fig.align='center',
-                 external=TRUE,
-                 echo=TRUE,
-                 warning=FALSE,
-                 fig.pos='H'
-                )
-  a4width<- 8.3
-  a4height<- 11.7
-```
 # Introduction
 
-This report is the first assessment for the **MATH5741M Statistical Theory and Methods** module. Its objective is to summarise statistically a dataset sample of crimes in the city of Chicago and answer the following research questions:
+This is the first assessment for the **MATH5741M Statistical Theory and Methods** module. Its objective is to summarise statistically a crime dataset sample from the city of Chicago and answer the following research questions:
 
-- What time of day do most types of crime in Chicago occur?
+- What time of day do most types of crime occur?
 
 - In which locations are specific types of crime more likely to happen?
 
-- Which districts of the city are potentially more dangerous per type of crime?
+- Which districts are potentially more dangerous per type of crime?
 
 # Data and methods
 
-The dataset analysed is a sample of the [original data of crimes extracted from the Chicago Police Department](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) which content the crimes that occurred in the city of Chicago from 2001 to present.
+The dataset analysed is a sample of the [original data of crimes extracted from the Chicago Police Department](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) that occurred in the city of Chicago from 2001 to present.
 
 For the analysis, first, we prepare the data creating, transforming and simplifying variables, as well as cleaning the dataset keeping the variables we are interested in. Secondly, we make a general univariable analysis of the data set, and then, with a multianalysys based on heatmaps we answer our questions. Finally, we sumarise the findings.
 
-This report has been done with `Rmarkdown`, although due to space limitations only the `R` code cells that have been considered most significant are shown. To see the complete code see  https://github.com/eugenividal/Chicago-Crime-Data-Analysis.
+The report describes not only the statistical process followed but also incorporates the most important R code used to carry it out. Unfortunately, space constraints did not allow to include all the code use, however it is available in  https://github.com/eugenividal/Chicago-Crime-Data-Analysis.
 
 # Results
 
@@ -312,7 +292,7 @@ ggplot(dd_agg_d, aes(x=District, y = count)) + theme_minimal() + geom_bar(stat="
 
 The multiple analysis focuses on type of crime crossed with hour, location and district.
 
-#### What time of day do most types of crime in Chicago occur?
+#### What time of day do most types of crime occur?
 
 Are some types of crimes more likely to happen in specific time of the day?
 
@@ -350,7 +330,7 @@ p2+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=el
         axis.text.x = element_text(size = 8, angle = 45, hjust = 1)) 
 ```
 
-#### Which districts of the city are potentially more dangerous per type of crime?
+#### Which districts are potentially more dangerous per type of crime?
 
 Are some types of crimes more likely to happen in specific distrits?
 

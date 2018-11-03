@@ -25,7 +25,7 @@
 \usepackage{hyperref}
 \hypersetup{unicode=true,
             pdftitle={Chicago Crime Data Analysis},
-            pdfauthor={Student ID: 201081646},
+            pdfauthor={Student ID:/ 201081646},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
@@ -35,37 +35,39 @@
 \newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
 % Add ',fontsize=\small' for more characters per line
-\newenvironment{Shaded}{}{}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.00,1.00}{{#1}}}
-\newcommand{\DataTypeTok}[1]{{#1}}
-\newcommand{\DecValTok}[1]{{#1}}
-\newcommand{\BaseNTok}[1]{{#1}}
-\newcommand{\FloatTok}[1]{{#1}}
-\newcommand{\ConstantTok}[1]{{#1}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
 \newcommand{\ImportTok}[1]{{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{1.00,0.25,0.00}{{#1}}}
-\newcommand{\FunctionTok}[1]{{#1}}
-\newcommand{\VariableTok}[1]{{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.00,1.00}{{#1}}}
-\newcommand{\OperatorTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
 \newcommand{\BuiltInTok}[1]{{#1}}
 \newcommand{\ExtensionTok}[1]{{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{1.00,0.25,0.00}{{#1}}}
-\newcommand{\AttributeTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
 \newcommand{\RegionMarkerTok}[1]{{#1}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{{#1}}}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
 \newcommand{\NormalTok}[1]{{#1}}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -114,43 +116,39 @@
   \title{Chicago Crime Data Analysis}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-  \author{Student ID: 201081646}
+  \author{Student ID:/ 201081646}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
   \predate{\centering\large\emph}
   \postdate{\par}
   \date{November 3, 2018}
 
-\usepackage{graphicx}
-\usepackage{float}
 
 \begin{document}
 \maketitle
 
 \section{Introduction}\label{introduction}
 
-This report is the first assessment for the \textbf{MATH5741M
-Statistical Theory and Methods} module. Its objective is to summarise
-statistically a dataset sample of crimes in the city of Chicago and
-answer the following research questions:
+This is the first assessment for the \textbf{MATH5741M Statistical
+Theory and Methods} module. Its objective is to summarise statistically
+a crime dataset sample from the city of Chicago and answer the following
+research questions:
 
 \begin{itemize}
 \item
-  What time of day do most types of crime in Chicago occur?
+  What time of day do most types of crime occur?
 \item
   In which locations are specific types of crime more likely to happen?
 \item
-  Which districts of the city are potentially more dangerous per type of
-  crime?
+  Which districts are potentially more dangerous per type of crime?
 \end{itemize}
 
 \section{Data and methods}\label{data-and-methods}
 
 The dataset analysed is a sample of the
 \href{https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2}{original
-data of crimes extracted from the Chicago Police Department} which
-content the crimes that occurred in the city of Chicago from 2001 to
-present.
+data of crimes extracted from the Chicago Police Department} that
+occurred in the city of Chicago from 2001 to present.
 
 For the analysis, first, we prepare the data creating, transforming and
 simplifying variables, as well as cleaning the dataset keeping the
@@ -158,9 +156,10 @@ variables we are interested in. Secondly, we make a general univariable
 analysis of the data set, and then, with a multianalysys based on
 heatmaps we answer our questions. Finally, we sumarise the findings.
 
-This report has been done with \texttt{Rmarkdown}, although due to space
-limitations only the \texttt{R} code cells that have been considered
-most significant are shown. To see the complete code see
+The report describes not only the statistical process followed but also
+incorporates the most important R code used to carry it out.
+Unfortunately, space constraints did not allow to include all the code
+use, however it is available in
 \url{https://github.com/eugenividal/Chicago-Crime-Data-Analysis}.
 
 \section{Results}\label{results}
@@ -188,7 +187,7 @@ questions. So, we drop all the variable we do not need.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# drop all variables we are not interested in}
+\CommentTok{# Drop all variables we are not interested in}
 \NormalTok{dd <-}\StringTok{ }\NormalTok{dd[, -}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{:}\DecValTok{8}\NormalTok{, }\DecValTok{10}\NormalTok{:}\DecValTok{11}\NormalTok{, }\DecValTok{13}\NormalTok{:}\DecValTok{18}\NormalTok{)]}
 \end{Highlighting}
 \end{Shaded}
@@ -197,7 +196,7 @@ Then, we clean the dataset of missing values.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# remove NAs}
+\CommentTok{# Remove NAs}
 \NormalTok{dd <-}\StringTok{ }\NormalTok{dd[}\KeywordTok{complete.cases}\NormalTok{(dd),]}
 \end{Highlighting}
 \end{Shaded}
@@ -229,38 +228,29 @@ Finally, the data is ready for the explotation.
 The number of crimes in Chicago has decrease dramatically per year from
 2001 to present.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig-1} 
-
-}
-
-\caption{Crimes evolution}\label{fig:fig}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig-1.pdf}
+\caption{Crimes evolution}
 \end{figure}
 
 Except for the deceptive practice, all the crimes have decresead in more
 or less grade.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig2-1} 
-
-}
-
-\caption{Evolution per type of crime}\label{fig:fig2}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig2-1.pdf}
+\caption{Evolution per type of crime}
 \end{figure}
 
 \paragraph{Crime per hour}\label{crime-per-hour}
 
 The crimes are concentrated in hours
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig3-1} 
-
-}
-
-\caption{Crimes per hour}\label{fig:fig3}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig3-1.pdf}
+\caption{Crimes per hour}
 \end{figure}
 
 \paragraph{Type of crimes}\label{type-of-crimes}
@@ -268,26 +258,20 @@ The crimes are concentrated in hours
 Per type of crime Theft is in difference the biggest number. Change the
 scientifyc number.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig6-1} 
-
-}
-
-\caption{Crimes per type}\label{fig:fig6}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig6-1.pdf}
+\caption{Crimes per type}
 \end{figure}
 
 \paragraph{Location of crimes}\label{location-of-crimes}
 
 These crimes are concentrated in Streets, give percentage.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig7-1} 
-
-}
-
-\caption{Crimes per location}\label{fig:fig7}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig7-1.pdf}
+\caption{Crimes per location}
 \end{figure}
 
 \paragraph{Crime per districts}\label{crime-per-districts}
@@ -299,21 +283,18 @@ Per districts the most dangerous are 8.
 The multiple analysis focuses on type of crime crossed with hour,
 location and district.
 
-\paragraph{What time of day do most types of crime in Chicago
-occur?}\label{what-time-of-day-do-most-types-of-crime-in-chicago-occur}
+\paragraph{What time of day do most types of crime
+occur?}\label{what-time-of-day-do-most-types-of-crime-occur}
 
 Are some types of crimes more likely to happen in specific time of the
 day?
 
 The most dangerous hours per Thefth are 00 and 12.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig9-1} 
-
-}
-
-\caption{Type of crime vs hour}\label{fig:fig9}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig9-1.pdf}
+\caption{Type of crime vs hour}
 \end{figure}
 
 \paragraph{In which locations are specific types of crime more likely to
@@ -323,30 +304,23 @@ Are some types of crimes more likely to happen in specific locations?
 
 Street is particularly important for Theft.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig11-1} 
-
-}
-
-\caption{Type of crime vs location}\label{fig:fig11}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig11-1.pdf}
+\caption{Type of crime vs location}
 \end{figure}
 
-\paragraph{Which districts of the city are potentially more dangerous
-per type of
-crime?}\label{which-districts-of-the-city-are-potentially-more-dangerous-per-type-of-crime}
+\paragraph{Which districts are potentially more dangerous per type of
+crime?}\label{which-districts-are-potentially-more-dangerous-per-type-of-crime}
 
 Are some types of crimes more likely to happen in specific distrits?
 
 Narcotics in district 11 is crealy a problem.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig10-1} 
-
-}
-
-\caption{Type of crime vs district}\label{fig:fig10}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v7_files/figure-latex/fig10-1.pdf}
+\caption{Type of crime vs district}
 \end{figure}
 
 \section{Conclusions}\label{conclusions}

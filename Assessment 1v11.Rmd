@@ -1,14 +1,13 @@
 ---
-title: 'Chicago Crime Data Analysis'
+title: "Chicago Crime: Data Analysis and \n Visualisations using R"
 author: 'Student ID: 201081646'
 date: "November 3, 2018"
 output:
-  pdf_document: 
+  pdf_document:
     fig_caption: yes
-    fig_crop: no
-    fig_height: 2
-    fig_width: 3
-    highlight: haddock
+    fig_crop: yes
+    fig_height: 3
+    fig_width: 5
     keep_tex: yes
     number_sections: yes
     toc_depth: 2
@@ -17,12 +16,41 @@ output:
     theme: journal
     toc: yes
     toc_depth: 2
-header-includes: 
-- \usepackage{graphicx}
-- \usepackage{float}
+header-includes:
+ \usepackage{float}
+ \floatplacement{figure}{H}
 ---
+```{r, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+# Introduction
+
+This report is the first assessment for the **MATH5741M Statistical Theory and Methods** module. Its objective is to summarise statistically a dataset sample of crimes in the city of Chicago and answer the following research questions:
+
+- How has crime evolved over time in the city of Chicago? 
+
+- What time of day do most types of crime occur?
+
+- In which locations are specific types of crime more likely to happen?
+
+- Which districts of the city are potentially more dangerous per type of crime?
+
+# Data and methods
+
+The dataset analysed is a sample of the [original data of crimes extracted from the Chicago Police Department](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) which content the crimes that occurred in the city of Chicago from 2001 to present.
+
+For the analysis, first, we prepare the data creating, transforming and simplifying variables, as well as cleaning the dataset keeping the variables we are interested in. Secondly, to answer our research questions we perform the an analysis based on line graphs and heat-maps. Finally, we summarise the findings.
+
+The report has been done with `Rmarkdown` but unfortunately does not include all the `R` code cells written for its performance<sup></sup>^[In this report it is not included the code used to group categories in variables `Primary.Type` and `Location.Description`, neither the code used to generate the visualisations]. However, it is available for consultation in this link https://github.com/eugenividal/Chicago-Crime-Data-Analysis.
+
+# Results
+
+## Data preparation
+
+First, we load the libraries we will need for the project and get the data into the `R` environment.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # load libraries
 library(ggplot2)
 library(ggmap)
@@ -33,76 +61,27 @@ library(dplyr)
 library(knitr)
 ```
 
-```{r echo=FALSE,warning=FALSE}
-  opts_chunk$set(fig.path='figure/graphics-', 
-                 cache.path='cache/graphics-', 
-                 fig.align='center',
-                 external=TRUE,
-                 echo=TRUE,
-                 warning=FALSE,
-                 fig.pos='H'
-                )
-  a4width<- 8.3
-  a4height<- 11.7
-```
-# Introduction
-
-This report is the first assessment for the **MATH5741M Statistical Theory and Methods** module. Its objective is to summarise statistically a dataset sample of crimes in the city of Chicago and answer the following research questions:
-
-- What time of day do most types of crime in Chicago occur?
-
-- In which locations are specific types of crime more likely to happen?
-
-- Which districts of the city are potentially more dangerous per type of crime?
-
-# Data and methods
-
-The dataset analysed is a sample of the [original data of crimes extracted from the Chicago Police Department](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) which content the crimes that occurred in the city of Chicago from 2001 to present.
-
-For the analysis, first, we prepare the data creating, transforming and simplifying variables, as well as cleaning the dataset keeping the variables we are interested in. Secondly, we make a general univariable analysis of the data set, and then, with a multianalysys based on heatmaps we answer our questions. Finally, we sumarise the findings.
-
-This report has been done with `Rmarkdown`, although due to space limitations only the `R` code cells that have been considered most significant are shown. To see the complete code see  https://github.com/eugenividal/Chicago-Crime-Data-Analysis.
-
-# Results
-
-## Data preparation
-
-First, we load the data into the `R` environment.
-
 ```{r eval=TRUE, echo=TRUE}
-# read csv in R
+# Read csv in R
 dd=read.csv("http://www1.maths.leeds.ac.uk/~charles/math5741/crime.csv",header=T)
 ```
 
-Second, we create new variables (`count`, `hour`) based on the existing ones, and give them the right format for later explotation. 
+Second, we create the new variables (`Count`, `Month_year`, `Hour`) based on the existing ones, and give them the right format for later exploration. 
 
-```{r, include=FALSE}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Create a variable count with value 1
-dd$count <- 1
-
+dd$Count <- 1
 # Convert Date from factor to date
 dd$Date <- mdy_hms(dd$Date)
-
 # Extract hour from Date
-dd$hour <- substring(dd$Date, 12,13)
-
+dd$Hour <- substring(dd$Date, 12,13)
 # Drop time from Date
 dd$Date <- as.Date(dd$Date, format="%m/%d/%Y")
-
-# Create a month year
-dd$Month_Yr <- format(as.Date(dd$Date), "%Y-%m")
+# Drop days from Date
+dd$Month_year <- as.Date(as.yearmon(dd$Date, "%Y-%m"))
 ```
 
-```{r, include=FALSE}
-# change format
-dd$hour <- as.factor(dd$hour)
-dd$Month_Yr <- as.Date(as.yearmon(dd$Month_Yr, "%Y-%m"))
-dd$Primary.Type <- as.factor(dd$Primary.Type)
-dd$Location.Description <- as.factor(dd$Location.Description)
-dd$District<- as.factor(dd$District)
-```
-
-Third, we simplify the variables `Primary.Type` and `Location.Description` grouping their categories and call them `Type_grouped` and `Location_grouped` respectivelly.
+Third, we group the categories of the variables `Primary.Type` and `Location.Description` to simplify the analysis and call them `Type_grouped` and `Location_grouped` respectively.
 
 ```{r, include=FALSE}
 # Group Primary.Type categories
@@ -150,50 +129,47 @@ dd$Location_grouped[dd$Location.Description == "TRAILER" | dd$Location.Descripti
 dd$Location_grouped[dd$Location.Description == "CTA GARAGE / OTHER PROPERTY" | dd$Location.Description =="DRIVEWAY - RESIDENTIAL" | dd$Location.Description =="GARAGE" | dd$Location.Description =="HOUSE" | dd$Location.Description == "PORCH" | dd$Location.Description =="RESIDENCE" | dd$Location.Description == "RESIDENCE PORCH/HALLWAY"| dd$Location.Description == "RESIDENCE-GARAGE"| dd$Location.Description == "RESIDENTIAL YARD (FRONT/BACK)"| dd$Location.Description == "YARD"]<- "Residence"
 ```
 
-Next, we keep only those variables which will help us to answer our questions. So, we drop all the variable we do not need.
+Next, we drop all variables we do not need to answer our research questions.
 
 ```{r, echo=TRUE}
-# drop all variables we are not interested in
-dd <- dd[, -c(1:8, 10:11, 13:18)]
+# Drop all variables we are not interested in
+dd <- dd[, -c(1:11, 13:18)]
 ```
 
 Then, we clean the dataset of missing values.
 
 ```{r, echo=TRUE}
-# remove NAs
+# Remove NAs
 dd <- dd[complete.cases(dd),]
 ```
 
-Finally, the data is ready for the explotation.
+Finally, we show the the dataset ready for exploration.
 
 ```{r, echo=TRUE}
+# Show first 5 records
 head(dd)
 ```
 
 ## Data exploration
 
-### General analysis
+### How has crime evolved over time in the city of Chicago?  
 
-#### Crime evolution 
-
-The number of crimes in Chicago has decrease dramatically per year from 2001 to present.
+To answer the first question we plot in Figure 1 the number of crimes per month from 2001 to the present. The graph shows that crime in the city of Chicago has been decreasing consistently over the whole period. The wave-shape of the graph also shows that there is a clear periodic pattern per months of the year.
 
 ```{r fig, fig.cap="Crimes evolution", echo=FALSE, message=FALSE, warning=FALSE}
-# plot the graph 
-ggplot(dd, aes(x=Month_Yr))+geom_line(stat="count") + labs(y = "Number of crimes") + theme_minimal() + theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
+# Plot the graph 
+ggplot(dd, aes(x=Month_year))+geom_line(color='steelblue', stat="Count") + theme_minimal() + theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank()) 
 ```
 
-Except for the deceptive practice, all the crimes have decresead in more or less grade. 
+In Figure 2 we plot the same graph per type of crime. Except the deceptive practice crime, which at present keeps in similar values as in 2001, the rest of type have been falling to a greater or lesser extent. 
 
 ```{r, include=FALSE}
+# create the function multiplot
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   require(grid)
-
   # make a list from the ... arguments and plotlist
   plots <- c(list(...), plotlist)
-
   numPlots = length(plots)
-
   # If layout is NULL, then use 'cols' to determine layout
   if (is.null(layout)) {
     # Make the panel
@@ -202,20 +178,16 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
                     ncol = cols, nrow = ceiling(numPlots/cols))
   }
-
  if (numPlots==1) {
     print(plots[[1]])
-
   } else {
     # Set up the page
     grid.newpage()
     pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
-
     # Make each plot, in the correct location
     for (i in 1:numPlots) {
       # Get the i,j matrix positions of the regions that contain this subplot
       matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
-
       print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
                                       layout.pos.col = matchidx$col))
     }
@@ -223,37 +195,37 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 ```
 
-```{r, fig2, fig.cap="Evolution per type of crime", echo=FALSE, message=FALSE, warning=FALSE}
+```{r, fig2, fig.cap="Evolution per type of crime", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Create a graph with each type evolution
 
-p1 <- ggplot(subset(dd, Type_grouped == "Theft"), aes(x=Month_Yr))+geom_line(stat="count")+
+p1 <- ggplot(subset(dd, Type_grouped == "Theft"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Theft") + theme_minimal() + theme(axis.title.x=element_blank()) + theme(text = element_text(size=8))
 
-p2 <- ggplot(subset(dd, Type_grouped == "Batery"), aes(x=Month_Yr))+geom_line(stat="count")+
+p2 <- ggplot(subset(dd, Type_grouped == "Batery"), aes(x=Month_year))+geom_line(color='steelblue',stat="Count")+
 labs(y = "Batery") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p3 <- ggplot(subset(dd, Type_grouped == "Criminal damage"), aes(x=Month_Yr))+geom_line(stat="count")+
+p3 <- ggplot(subset(dd, Type_grouped == "Criminal damage"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Criminal\n damage") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p4 <- ggplot(subset(dd, Type_grouped == "Narcotics"), aes(x=Month_Yr))+geom_line(stat="count")+
+p4 <- ggplot(subset(dd, Type_grouped == "Narcotics"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Narcotics") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p5 <- ggplot(subset(dd, Type_grouped == "Others"), aes(x=Month_Yr))+geom_line(stat="count")+
+p5 <- ggplot(subset(dd, Type_grouped == "Others"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Others") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p6 <- ggplot(subset(dd, Type_grouped == "Other offense"), aes(x=Month_Yr))+geom_line(stat="count")+
+p6 <- ggplot(subset(dd, Type_grouped == "Other offense"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Other\n offense") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p7 <- ggplot(subset(dd, Type_grouped == "Assault"),  aes(x=Month_Yr))+geom_line(stat="count") +
+p7 <- ggplot(subset(dd, Type_grouped == "Assault"),  aes(x=Month_year))+geom_line(color='steelblue', stat="count") +
 labs(y = "Assault") + theme_minimal() + theme(axis.title.x=element_blank()) + theme(text = element_text(size=8))
 
-p8 <- ggplot(subset(dd, Type_grouped == "Burglary"), aes(x=Month_Yr))+geom_line(stat="count")+
+p8 <- ggplot(subset(dd, Type_grouped == "Burglary"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Burglary") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p9 <- ggplot(subset(dd, Type_grouped == "Robery"), aes(x=Month_Yr))+geom_line(stat="count")+
+p9 <- ggplot(subset(dd, Type_grouped == "Robery"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Robery") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p10 <- ggplot(subset(dd, Type_grouped == "Deceptive practice"), aes(x=Month_Yr))+geom_line(stat="count")+
+p10 <- ggplot(subset(dd, Type_grouped == "Deceptive practice"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
 labs(y = "Deceptive\n practice") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
 multiplot(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, cols=2) 
@@ -263,67 +235,60 @@ multiplot(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, cols=2)
 
 The crimes are concentrated in hours
 
-```{r, fig3, fig.cap="Crimes per hour", echo=FALSE}
+```{r, fig3, fig.cap="Crimes per hour", echo=FALSE, out.extra='',fig.align='center'}
 # Plot the graph 
-ggplot(dd, aes(x=hour))+geom_bar(stat="count")+
-  xlab("mon")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Hour", y = "Number of crimes") + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
+ggplot(dd, aes(x=Hour))+geom_bar(stat="Count", width=0.8, fill = "steelblue")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Hour", y = "Number of crimes") + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
 ```
 
 #### Type of crimes
 
 Per type of crime Theft is in difference the biggest number. Change the scientifyc number.
 
-```{r fig6, fig.cap="Crimes per type", echo=FALSE}
+```{r fig6, fig.cap="Crimes per type", echo=FALSE, out.extra='',fig.align='center'}
 options(scipen=10000)
-dd_agg <- aggregate(count ~ Type_grouped, data = dd, FUN = sum)
-dd_agg$Type_grouped <- factor(dd_agg$Type_grouped, levels = dd_agg$Type_grouped[order(-dd_agg$count)])
-ggplot(dd_agg, aes(x = Type_grouped, y = count)) + theme_minimal() + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "Type of crimes", y = "Number of crimes")+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
+dd_agg <- aggregate(Count ~ Type_grouped, data = dd, FUN = sum)
+dd_agg$Type_grouped <- factor(dd_agg$Type_grouped, levels = dd_agg$Type_grouped[order(-dd_agg$Count)])
+ggplot(dd_agg, aes(x = Type_grouped, y = Count)) + theme_minimal() + geom_bar(stat="identity", width=0.7, fill = "steelblue") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "Type of crimes", y = "Number of crimes")+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
 ```
 
 #### Location of crimes
 
 These crimes are concentrated in Streets, give percentage.
 
-```{r fig7, fig.cap="Crimes per location", echo=FALSE}
+```{r fig7, fig.cap="Crimes per location", echo=FALSE, out.extra='',fig.align='center'}
 # create aggregated object
-dd_agg_l <- aggregate(count ~ Location_grouped, data = dd, FUN = sum)
+dd_agg_l <- aggregate(Count ~ Location_grouped, data = dd, FUN = sum)
 # order values
-dd_agg_l$Location_grouped <- factor(dd_agg_l$Location_grouped, levels = dd_agg_l$Location_grouped[order(-dd_agg_l$count)])
+dd_agg_l$Location_grouped <- factor(dd_agg_l$Location_grouped, levels = dd_agg_l$Location_grouped[order(-dd_agg_l$Count)])
 # plot the graph 
-ggplot(dd_agg_l, aes(x = Location_grouped, y = count)) + theme_minimal() + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "Location", y = "Number of crimes")+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
+ggplot(dd_agg_l, aes(x = Location_grouped, y = Count)) + theme_minimal() + geom_bar(stat="identity", width=0.7, fill = "steelblue") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "Location", y = "Number of crimes")+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
 ```
 
 #### Crime per districts
 
 Per districts the most dangerous are 8. 
 
-```{r fig8, fig.cap="Crimes per district", include=FALSE}
+```{r fig8, echo=FALSE, fig.cap="Crimes per district", message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Remove values districts 21 and 31
 dd_sub <- subset(dd, District!="21" & District!="31")
 # create the aggregated object
-dd_agg_d <- aggregate(count ~ District, data = dd_sub, FUN = sum)
+dd_agg_d <- aggregate(Count ~ District, data = dd_sub, FUN = sum)
 # order values
-dd_agg_d$District <- factor(dd_agg_d$District, levels = dd_agg_d$District[order(-dd_agg_d$count)])
+dd_agg_d$District <- factor(dd_agg_d$District, levels = dd_agg_d$District[order(-dd_agg_d$Count)])
 # Plot the graph 
-ggplot(dd_agg_d, aes(x=District, y = count)) + theme_minimal() + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "District", y = "Number of crimes") + theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
+ggplot(dd_agg_d, aes(x=District, y = Count)) + theme_minimal() + geom_bar(stat="identity", width=0.7, fill = "steelblue") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "District", y = "Number of crimes") + theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
 ```
 
-### Answers to our questions
+### What time of day do most types of crime occur?
 
-The multiple analysis focuses on type of crime crossed with hour, location and district.
+Figure 3 a head map between type of crime and hour. The peak hour of crimes morning, other crimes peak during the and the final group of crimes peak at night.
 
-#### What time of day do most types of crime in Chicago occur?
-
-Are some types of crimes more likely to happen in specific time of the day?
-
-The most dangerous hours per Thefth are 00 and 12.
-
-```{r fig9, fig.cap="Type of crime vs hour", echo=FALSE}
+```{r fig9, fig.cap="Type of crime vs hour", echo=FALSE, out.extra='', fig.align='center'}
 # add variable: performance
-count_h <- aggregate(count ~ Type_grouped + hour, data = dd, FUN = sum)
-
-p1 <- ggplot(data = count_h, aes(x = hour, y = Type_grouped)) + geom_tile(aes(fill = count), color = "white") +
-  scale_fill_gradient(low = "white", high = "black") 
+count_h <- aggregate(Count ~ Type_grouped + Hour, data = dd, FUN = sum)
+# Plot graph
+p1 <- ggplot(data = count_h, aes(x = Hour, y = Type_grouped)) + geom_tile(aes(fill = Count), color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue") 
 p1 + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank()) +
   theme(legend.title = element_text(size = 10),
         legend.text = element_text(size = 6),
@@ -331,18 +296,16 @@ p1 + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=e
         axis.text.x = element_text(size = 8, angle = 45, hjust = 1)) 
 ```
 
-#### In which locations are specific types of crime more likely to happen?
+### In which locations are specific types of crime more likely to happen?
 
-Are some types of crimes more likely to happen in specific locations?
+Figure 4 shows that some locations are more likely per type of crime. For theft for instance it is better this or that.
 
-Street is particularly important for Theft.
-
-```{r fig11, fig.cap="Type of crime vs location", echo=FALSE, fig.pos="H"}
+```{r fig11, fig.cap="Type of crime vs location", echo=FALSE, out.extra='',fig.align='center'}
 # add variable: performance
-count_l <- aggregate(count ~  Type_grouped + Location_grouped, data = dd, FUN = sum)
+count_l <- aggregate(Count ~  Type_grouped + Location_grouped, data = dd, FUN = sum)
 
-p2 <- ggplot(data = count_l, aes(x = Location_grouped, y = Type_grouped)) + geom_tile(aes(fill = count), color = "white") +
-  scale_fill_gradient(low = "white", high = "black") 
+p2 <- ggplot(data = count_l, aes(x = Location_grouped, y = Type_grouped)) + geom_tile(aes(fill = Count), color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue") 
 p2+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank()) +
   theme(legend.title = element_text(size = 10),
         legend.text = element_text(size = 6),
@@ -350,19 +313,20 @@ p2+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=el
         axis.text.x = element_text(size = 8, angle = 45, hjust = 1)) 
 ```
 
-#### Which districts of the city are potentially more dangerous per type of crime?
+### Which districts of the city are potentially more dangerous per type of crime?
 
-Are some types of crimes more likely to happen in specific distrits?
+Finally, Figure 5 depicts the districts which are more potentially dangerous per tyep of crime. District 11 for instance seems clearly problematic for Narcotics.
 
-Narcotics in district 11 is crealy a problem.
-
-```{r fig10, fig.cap="Type of crime vs district", echo=FALSE}
+```{r fig10, fig.cap="Type of crime vs district", echo=FALSE, out.extra='',fig.align='center'}
+# Remove values districts 21 and 31
+dd$District<- as.factor(dd$District)
+dd_sub <- subset(dd, District!="21" & District!="31")
 # add variable: performance
-count_d <- aggregate(count ~ Type_grouped + District, data = dd_sub, FUN = sum)
+count_d <- aggregate(Count ~ Type_grouped + District, data = dd_sub, FUN = sum)
 
 p3<-ggplot(data = count_d, aes(x = District, y = Type_grouped)) +
-  geom_tile(aes(fill = count), color = "white") +
-  scale_fill_gradient(low = "white", high = "black")  
+  geom_tile(aes(fill = Count), color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue")  
 p3+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank()) +
   theme(legend.title = element_text(size = 10),
         legend.text = element_text(size = 6),

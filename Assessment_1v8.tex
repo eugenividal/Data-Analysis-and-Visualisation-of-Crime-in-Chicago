@@ -35,37 +35,39 @@
 \newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
 % Add ',fontsize=\small' for more characters per line
-\newenvironment{Shaded}{}{}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.00,1.00}{{#1}}}
-\newcommand{\DataTypeTok}[1]{{#1}}
-\newcommand{\DecValTok}[1]{{#1}}
-\newcommand{\BaseNTok}[1]{{#1}}
-\newcommand{\FloatTok}[1]{{#1}}
-\newcommand{\ConstantTok}[1]{{#1}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.00,0.50,0.50}{{#1}}}
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
 \newcommand{\ImportTok}[1]{{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{1.00,0.25,0.00}{{#1}}}
-\newcommand{\FunctionTok}[1]{{#1}}
-\newcommand{\VariableTok}[1]{{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.00,1.00}{{#1}}}
-\newcommand{\OperatorTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
 \newcommand{\BuiltInTok}[1]{{#1}}
 \newcommand{\ExtensionTok}[1]{{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{1.00,0.25,0.00}{{#1}}}
-\newcommand{\AttributeTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
 \newcommand{\RegionMarkerTok}[1]{{#1}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{{#1}}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{{#1}}}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
 \newcommand{\NormalTok}[1]{{#1}}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -121,8 +123,7 @@
   \postdate{\par}
   \date{November 3, 2018}
 
-\usepackage{graphicx}
-\usepackage{float}
+\usepackage{float} \floatplacement{figure}{H}
 
 \begin{document}
 \maketitle
@@ -154,9 +155,10 @@ present.
 
 For the analysis, first, we prepare the data creating, transforming and
 simplifying variables, as well as cleaning the dataset keeping the
-variables we are interested in. Secondly, we make a general univariable
-analysis of the data set, and then, with a multianalysys based on
-heatmaps we answer our questions. Finally, we sumarise the findings.
+variables we are interested in. Secondly, we make a basic univariable
+analysis of the dataset, and then, with a multianalysys based on
+heatmaps we answer our research questions. Finally, we sumarise the
+findings.
 
 This report has been done with \texttt{Rmarkdown}, although due to space
 limitations only the \texttt{R} code cells that have been considered
@@ -171,7 +173,7 @@ First, we load the data into the \texttt{R} environment.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# read csv in R}
+\CommentTok{# Read csv in R}
 \NormalTok{dd=}\KeywordTok{read.csv}\NormalTok{(}\StringTok{"http://www1.maths.leeds.ac.uk/~charles/math5741/crime.csv"}\NormalTok{,}\DataTypeTok{header=}\NormalTok{T)}
 \end{Highlighting}
 \end{Shaded}
@@ -183,13 +185,13 @@ Third, we simplify the variables \texttt{Primary.Type} and
 \texttt{Location.Description} grouping their categories and call them
 \texttt{Type\_grouped} and \texttt{Location\_grouped} respectivelly.
 
-Next, we keep only those variables which will help us to answer our
-questions. So, we drop all the variable we do not need.
+Next, we drop all variables we do not need to perform the general
+anasylis or answer our research questions.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# drop all variables we are not interested in}
-\NormalTok{dd <-}\StringTok{ }\NormalTok{dd[, -}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{:}\DecValTok{8}\NormalTok{, }\DecValTok{10}\NormalTok{:}\DecValTok{11}\NormalTok{, }\DecValTok{13}\NormalTok{:}\DecValTok{18}\NormalTok{)]}
+\CommentTok{# Drop all variables we are not interested in}
+\NormalTok{dd <-}\StringTok{ }\NormalTok{dd[, -}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{:}\DecValTok{11}\NormalTok{, }\DecValTok{13}\NormalTok{:}\DecValTok{18}\NormalTok{)]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -197,27 +199,28 @@ Then, we clean the dataset of missing values.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# remove NAs}
+\CommentTok{# Remove NAs}
 \NormalTok{dd <-}\StringTok{ }\NormalTok{dd[}\KeywordTok{complete.cases}\NormalTok{(dd),]}
 \end{Highlighting}
 \end{Shaded}
 
-Finally, the data is ready for the explotation.
+Finally, the dataset is ready for the explotation.
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{# Show first 5 records}
 \KeywordTok{head}\NormalTok{(dd)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-##   Arrest District count hour   Month_Yr Type_grouped Location_grouped
-## 1   true       19     1   00 2013-07-01       Batery           Street
-## 2   true       19     1   01 2013-07-01       Others           Street
-## 3  false        2     1   21 2013-07-01      Assault        Apartment
-## 4   true        9     1   02 2013-07-01    Narcotics           Street
-## 5  false        3     1   17 2013-07-01        Theft           Street
-## 6   true        9     1   01 2013-07-01       Batery        Apartment
+##         Date District count hour Type_grouped Location_grouped
+## 1 2013-07-01       19     1   12       Batery           Street
+## 2 2013-07-01       19     1   01       Others           Street
+## 3 2013-07-01        2     1   09      Assault        Apartment
+## 4 2013-07-01        9     1   02    Narcotics           Street
+## 5 2013-07-01        3     1   05        Theft           Street
+## 6 2013-07-01        9     1   01       Batery        Apartment
 \end{verbatim}
 
 \subsection{Data exploration}\label{data-exploration}
@@ -229,13 +232,10 @@ Finally, the data is ready for the explotation.
 The number of crimes in Chicago has decrease dramatically per year from
 2001 to present.
 
-\begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig-1} 
-
-}
-
-\caption{Crimes evolution}\label{fig:fig}
+\begin{figure}[htbp]
+\centering
+\includegraphics{Assessment_1v8_files/figure-latex/fig-1.pdf}
+\caption{Crimes evolution}
 \end{figure}
 
 Except for the deceptive practice, all the crimes have decresead in more
@@ -243,7 +243,7 @@ or less grade.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{figure/graphics-fig2-1} 
+{\centering \includegraphics{Assessment_1v8_files/figure-latex/fig2-1} 
 
 }
 
@@ -255,12 +255,7 @@ or less grade.
 The crimes are concentrated in hours
 
 \begin{figure}[H]
-
-{\centering \includegraphics{figure/graphics-fig3-1} 
-
-}
-
-\caption{Crimes per hour}\label{fig:fig3}
+\includegraphics{Assessment_1v8_files/figure-latex/fig3-1} \caption{Crimes per hour}\label{fig:fig3}
 \end{figure}
 
 \paragraph{Type of crimes}\label{type-of-crimes}
@@ -270,7 +265,7 @@ scientifyc number.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{figure/graphics-fig6-1} 
+{\centering \includegraphics{Assessment_1v8_files/figure-latex/fig6-1} 
 
 }
 
@@ -283,7 +278,7 @@ These crimes are concentrated in Streets, give percentage.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{figure/graphics-fig7-1} 
+{\centering \includegraphics{Assessment_1v8_files/figure-latex/fig7-1} 
 
 }
 
@@ -293,6 +288,15 @@ These crimes are concentrated in Streets, give percentage.
 \paragraph{Crime per districts}\label{crime-per-districts}
 
 Per districts the most dangerous are 8.
+
+\begin{figure}[H]
+
+{\centering \includegraphics{Assessment_1v8_files/figure-latex/fig8-1} 
+
+}
+
+\caption{Crimes per district}\label{fig:fig8}
+\end{figure}
 
 \subsubsection{Answers to our questions}\label{answers-to-our-questions}
 
@@ -309,7 +313,7 @@ The most dangerous hours per Thefth are 00 and 12.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{figure/graphics-fig9-1} 
+{\centering \includegraphics{Assessment_1v8_files/figure-latex/fig9-1} 
 
 }
 
@@ -325,7 +329,7 @@ Street is particularly important for Theft.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{figure/graphics-fig11-1} 
+{\centering \includegraphics{Assessment_1v8_files/figure-latex/fig11-1} 
 
 }
 
@@ -342,7 +346,7 @@ Narcotics in district 11 is crealy a problem.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{figure/graphics-fig10-1} 
+{\centering \includegraphics{Assessment_1v8_files/figure-latex/fig10-1} 
 
 }
 
