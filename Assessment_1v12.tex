@@ -113,15 +113,16 @@
 }
 
 \setlength{\droptitle}{-2em}
+
   \title{Chicago Crime: Data Analysis and Visualisations using R}
-  \pretitle{\vspace{\droptitle}\centering\huge}
+    \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-  \author{Student ID: 201081646}
-  \preauthor{\centering\large\emph}
+    \author{Student ID: 201081646}
+    \preauthor{\centering\large\emph}
   \postauthor{\par}
-  \predate{\centering\large\emph}
+      \predate{\centering\large\emph}
   \postdate{\par}
-  \date{November 3, 2018}
+    \date{November 3, 2018}
 
 \usepackage{float} \floatplacement{figure}{H}
 
@@ -132,8 +133,8 @@
 
 This report is the first assessment for the \textbf{MATH5741M
 Statistical Theory and Methods} module. Its objective is to summarise
-statistically a dataset sample of crimes in the city of Chicago and
-answer the following research questions:
+statistically a dataset sample of crimes in the city of Chicago and due
+to limit has restic to answer the following research questions:
 
 \begin{itemize}
 \item
@@ -212,6 +213,8 @@ give them the right format for later exploration.
 \end{Highlighting}
 \end{Shaded}
 
+?as.Date
+
 Third, we group the categories of the variables \texttt{Primary.Type}
 and \texttt{Location.Description} to simplify the analysis and call them
 \texttt{Type\_grouped} and \texttt{Location\_grouped} respectively.
@@ -222,7 +225,7 @@ questions.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Drop all variables we are not interested in}
-\NormalTok{dd <-}\StringTok{ }\NormalTok{dd[, -}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{:}\DecValTok{11}\NormalTok{, }\DecValTok{13}\NormalTok{:}\DecValTok{18}\NormalTok{)]}
+\NormalTok{dd <-}\StringTok{ }\NormalTok{dd[, -}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{:}\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{:}\DecValTok{11}\NormalTok{, }\DecValTok{13}\NormalTok{:}\DecValTok{18}\NormalTok{)]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -245,13 +248,13 @@ Finally, we show the the dataset ready for exploration.
 \end{Shaded}
 
 \begin{verbatim}
-##   District Count Hour Month_year Type_grouped Location_grouped
-## 1       19     1   00 2013-07-01       Batery           Street
-## 2       19     1   01 2013-07-01       Others           Street
-## 3        2     1   21 2013-07-01      Assault        Apartment
-## 4        9     1   02 2013-07-01    Narcotics           Street
-## 5        3     1   17 2013-07-01        Theft           Street
-## 6        9     1   01 2013-07-01       Batery        Apartment
+##         Date District Count Hour Month_year Type_grouped Location_grouped
+## 1 2013-07-20       19     1   00 2013-07-01       Batery           Street
+## 2 2013-07-20       19     1   01 2013-07-01       Others           Street
+## 3 2013-07-19        2     1   21 2013-07-01      Assault        Apartment
+## 4 2013-07-20        9     1   02 2013-07-01    Narcotics           Street
+## 5 2013-07-12        3     1   17 2013-07-01        Theft           Street
+## 6 2013-07-20        9     1   01 2013-07-01       Batery        Apartment
 \end{verbatim}
 
 \subsection{Data exploration}\label{data-exploration}
@@ -265,15 +268,26 @@ city of Chicago has been decreasing consistently over the whole period.
 The wave-shape of the graph also shows that there is a clear periodic
 pattern per months of the year.
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dd_aggr <-}\StringTok{ }\KeywordTok{aggregate}\NormalTok{(Count ~}\StringTok{ }\NormalTok{Date, }\DataTypeTok{data =} \NormalTok{dd, }\DataTypeTok{FUN =} \NormalTok{sum)}
+\CommentTok{# add cumulative column to the data frame}
+\NormalTok{dd_aggr[,}\StringTok{"cum_Count"}\NormalTok{] <-}\StringTok{ }\KeywordTok{cumsum}\NormalTok{(dd_aggr$Count)}
+\CommentTok{# cumulative sum over rolling date range}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{figure}[htbp]
 \centering
 \includegraphics{Assessment_1v12_files/figure-latex/fig-1.pdf}
 \caption{Crimes evolution}
 \end{figure}
 
-In Figure 2 we plot the same graph per type of crime. Except the
-deceptive practice crime, which at present keeps in similar values as in
-2001, the rest of type have been falling to a greater or lesser extent.
+In Figure 2 we plot the same graph per type of crime ordered per
+importance, being Theft the most significant and deceptive practice the
+less. Except the deceptive practice crime, which at present keeps in
+similar values as in 2001, the rest of type have been falling to a
+greater or lesser extent.
 
 \begin{figure}[H]
 

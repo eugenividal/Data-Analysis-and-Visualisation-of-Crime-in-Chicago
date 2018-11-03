@@ -6,8 +6,8 @@ output:
   pdf_document:
     fig_caption: yes
     fig_crop: yes
-    fig_height: 3
-    fig_width: 5
+    fig_height: 3.5
+    fig_width: 5.5
     keep_tex: yes
     number_sections: yes
     toc_depth: 2
@@ -30,7 +30,7 @@ This report is the first assessment for the **MATH5741M Statistical Theory and M
 
 - How has crime evolved over time in the city of Chicago? 
 
-- What time of day do most crime occur?
+- When time of day do most crime occur?
 
 - In which locations is crime more likely to happen?
 
@@ -131,7 +131,7 @@ Next, we drop all variables we do not need to answer our research questions.
 
 ```{r, echo=TRUE}
 # Drop all variables we are not interested in
-dd <- dd[, -c(1:11, 13:18)]
+dd <- dd[, -c(1:2, 4:11, 13:18)]
 ```
 
 Then, we clean the dataset of missing values.
@@ -193,37 +193,43 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 ```
 
+```{r}
+ggplot(data=dd, aes(x=Month_year, y=Count, group = Type_grouped, colour = Type_grouped)) +
+    geom_line() +
+    geom_point( size=4, shape=21, fill="white")
+```
+
+
 ```{r, fig2, fig.cap="Evolution per type of crime", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Create a graph with each type evolution
-
-p1 <- ggplot(subset(dd, Type_grouped == "Theft"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p1 <- ggplot(subset(dd, Type_grouped == "Theft"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Theft") + theme_minimal() + theme(axis.title.x=element_blank()) + theme(text = element_text(size=8))
 
-p2 <- ggplot(subset(dd, Type_grouped == "Batery"), aes(x=Month_year))+geom_line(color='steelblue',stat="Count")+
+p2 <- ggplot(subset(dd, Type_grouped == "Batery"), aes(x=Month_year))+geom_line(color='steelblue',stat="count")+
 labs(y = "Batery") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p3 <- ggplot(subset(dd, Type_grouped == "Criminal damage"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p3 <- ggplot(subset(dd, Type_grouped == "Criminal damage"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Criminal\n damage") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p4 <- ggplot(subset(dd, Type_grouped == "Narcotics"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p4 <- ggplot(subset(dd, Type_grouped == "Narcotics"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Narcotics") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p5 <- ggplot(subset(dd, Type_grouped == "Others"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p5 <- ggplot(subset(dd, Type_grouped == "Others"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Others") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p6 <- ggplot(subset(dd, Type_grouped == "Other offense"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p6 <- ggplot(subset(dd, Type_grouped == "Other offense"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Other\n offense") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
 p7 <- ggplot(subset(dd, Type_grouped == "Assault"),  aes(x=Month_year))+geom_line(color='steelblue', stat="count") +
 labs(y = "Assault") + theme_minimal() + theme(axis.title.x=element_blank()) + theme(text = element_text(size=8))
 
-p8 <- ggplot(subset(dd, Type_grouped == "Burglary"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p8 <- ggplot(subset(dd, Type_grouped == "Burglary"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Burglary") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p9 <- ggplot(subset(dd, Type_grouped == "Robery"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p9 <- ggplot(subset(dd, Type_grouped == "Robery"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Robery") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
-p10 <- ggplot(subset(dd, Type_grouped == "Deceptive practice"), aes(x=Month_year))+geom_line(color='steelblue', stat="Count")+
+p10 <- ggplot(subset(dd, Type_grouped == "Deceptive practice"), aes(x=Month_year))+geom_line(color='steelblue', stat="count")+
 labs(y = "Deceptive\n practice") + theme_minimal() + theme(axis.title.x=element_blank())  + theme(text = element_text(size=8))
 
 multiplot(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, cols=2) 
