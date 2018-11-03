@@ -316,6 +316,8 @@ The multiple analysis focuses on type of crime crossed with hour, location and d
 
 #### Type of crime vs hour
 
+Are some types of crimes more likely to happen in specific time of the day?
+
 The most dangerous hours per Thefth are 00 and 12.
 
 ```{r fig9, fig.cap="Type of crime vs hour", echo=FALSE}
@@ -333,6 +335,8 @@ p1 + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=e
 
 #### Type of crime vs location
 
+Are some types of crimes more likely to happen in specific locations?
+
 Street is particularly important for Theft.
 
 ```{r fig11, fig.cap="Type of crime vs location", echo=FALSE}
@@ -349,6 +353,8 @@ p2+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=el
 ```
 
 #### Type of crime vs district
+
+Are some types of crimes more likely to happen in specific distrits?
 
 Narcotics in district 11 is crealy a problem.
 
