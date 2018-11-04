@@ -18,8 +18,6 @@ The analysis is done with a sample of the [crime dataset from the Chicago Police
 
 We first prepare the data, creating, transforming and cleaning the variables we are interested in. Then, we perform the statistical analysis through line graphs, bar graphs and heat-maps which will answer each of our research questions. 
 
-The report has been done with `Rmarkdown` and it is code reproducible. However, due to space limitation (it should not be more than 6 pages in total) does not include all the code written for its performance. <sup></sup>^[To see the whole code visit https://github.com/eugenividal/Chicago-Crime-Data-Analysis.]
-
 ## Results
 
 ### Data preparation
@@ -57,7 +55,7 @@ dd$Hour <- substring(dd$Date, 12,13)
 dd$Date <- as.Date(dd$Date, format="%m/%d/%Y")
 ```
 
-Fourth, we group in larger categories the existent ones in the variables `Primary.Type` and `Location.Description`, and call them `Type_grouped` and `Location_grouped` respectively<sup></sup>^[The code written to group the variables' categories can be seen at https://github.com/eugenividal/Chicago-Crime-Data-Analysis].
+Fourth, we group in larger categories the existent ones in the variables `Primary.Type` and `Location.Description`, and call them `Type_grouped` and `Location_grouped` respectively.
 
 ```{r, include=FALSE}
 # Group Primary.Type categories
@@ -128,7 +126,7 @@ head(dd)
 
 #### How has crime evolved over time in the city of Chicago?  
 
-To answer the first question we plot the number of crimes per year from 2001 to 2015 (Figure 1) <sup></sup>^[See visualisations code at https://github.com/eugenividal/Chicago-Crime-Data-Analysis]. The graph shows that crime in the city of Chicago has been decreasing year after year, with a continuous decline. 
+To answer the first question we plot the number of crimes per year from 2001 to 2015 (Figure 1). The graph shows that crime in the city of Chicago has been decreasing year after year, with a continuous decline. 
 
 ```{r fig, fig.cap="Crimes evolution 2001-2015", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Create aggregated object
