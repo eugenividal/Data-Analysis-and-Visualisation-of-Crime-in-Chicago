@@ -1,29 +1,8 @@
----
-title: "Data Analysis and Visualisation of Crime in Chicago"
-author: 'Student ID: 201081646'
-output:
-  pdf_document:
-    fig_caption: yes
-    fig_crop: yes
-    fig_height: 3.2
-    fig_width: 5.2
-    keep_tex: yes
-    number_sections: yes
-    toc_depth: 2
-  html_document:
-    fig_caption: yes
-    theme: journal
-    toc: yes
-    toc_depth: 2
-header-includes:
- \usepackage{float}
- \floatplacement{figure}{H}
----
-```{r, include=FALSE}
-knitr::opts_chunk$set(fig.pos = 'H')
-```
 
-# Introduction
+# Data Analysis and Visualisation of Crime in Chicago
+
+
+## Introduction
 
 This report is the first assessment of the **MATH5741M Statistical Theory and Methods** module. Its aims are to summarise a crime dataset from the city of Chicago and answer the following research questions:
 
@@ -35,7 +14,7 @@ This report is the first assessment of the **MATH5741M Statistical Theory and Me
 
 - Which districts are more potentially dangerous?
 
-# Data and methods
+## Data and methods
 
 The analysis was done using a sample of the [crime dataset from the Chicago Police Department](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) which contained all the crime incidents that occurred in the city of Chicago from 2001 to October 2016.
 
@@ -43,9 +22,9 @@ To perform the analysis, we first prepared the data. For this, we created, trans
 
 The whole process was done using the software `R` and `Rmarkdown`, and it is reproducible based on code. 
 
-# Results
+## Results
 
-## Data preparation
+### Data preparation
 
 First, we activated the libraries needed to set up the project.
 
@@ -146,9 +125,9 @@ Finally, here we can see an abstract of the final dataset ready for exploration.
 head(dd)
 ```
 
-## Data exploration
+### Data exploration
 
-### How has crime evolved over time in the city of Chicago?  
+#### How has crime evolved over time in the city of Chicago?  
 
 To answer the first question we plotted Figures 1 and 2. Figure 1 shows the number of crimes per year from 2001 to 2015. As it can be seen in the graph, crime in the city of Chicago has been decreasing year after year, with a clear and continuous decline. 
 
@@ -171,7 +150,7 @@ ggplot(data=dd_aggr2, aes(x=Year, y=Count, group = Type_grouped, colour = Type_g
 
 \pagebreak
 
-### What time of day does most crime occur?
+#### What time of day does most crime occur?
 
 Figures 3 and 4 lead us to anwer question 2. Figure 3 indicates that the number of crimes increases gradually from 05:00 in the morning (the hour with less crimes) until 20:00 in the evening (the hour with the most crimes). The hours of 12:00 and 00:00 are exceptionally high, both at a similar level as 20:00.
 
@@ -197,7 +176,7 @@ p1 + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=e
 
 \pagebreak
 
-### In which locations of the city is crime more likely to happen? 
+#### In which locations of the city is crime more likely to happen? 
 
 Figure 5 and 6 indicate the location of crime. As is illustrated by Figure 5, most crimes happen in the Street, followed by Residences and Apartments.
 
@@ -227,7 +206,7 @@ p2+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=el
 
 \pagebreak
 
-### Which districts are more potentially dangerous?
+#### Which districts are more potentially dangerous?
 
 Finally, Figure 7 and 8 gives us the anwer for the last question. In Figure 7 we visualise the number of crimes per districts. The most dangerous district seems to be number 8, with more than 30,000 records in the 15 years, while district 20 with less than 10,000 seems the safest. 
 
