@@ -251,7 +251,7 @@ p6
 
 Finally, in Figure 7, we visualise the number of crimes per districts. The most dangerous district seems number 8, with more than 30,000 records in the 15 years, while district 20 with less than 10,000 seems the safest. 
 
-```{r fig7, echo=FALSE, fig.cap="Figure 7. Crimes per district"}
+```{r fig7, echo=FALSE, fig.cap="Figure 7. Crimes per district",fig.align='center'}
 # Remove values districts 21 and 31
 dd$District<- as.factor(dd$District)
 dd_sub <- subset(dd, District!="21" & District!="31")
