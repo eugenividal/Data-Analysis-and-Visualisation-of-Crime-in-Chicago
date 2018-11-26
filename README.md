@@ -1,4 +1,6 @@
-# Crime in Chicago: A Data Analysis Summary using R
+
+# Data Analysis and Visualisation of Crime in Chicago
+
 
 ## Introduction
 
@@ -6,7 +8,7 @@ This report is the first assessment of the **MATH5741M Statistical Theory and Me
 
 - How has crime evolved over time in the city of Chicago? 
 
-- What time of day do most crime occur?
+- What time of day does most crime occur?
 
 - In which locations of the city is crime more likely to happen?
 
@@ -14,15 +16,17 @@ This report is the first assessment of the **MATH5741M Statistical Theory and Me
 
 ## Data and methods
 
-The analysis is done with a sample of the [crime dataset from the Chicago Police Department](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) which contains all the crime incidents that occurred in the city of Chicago from 2001 to the present.
+The analysis was done using a sample of the [crime dataset from the Chicago Police Department](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) which contained all the crime incidents that occurred in the city of Chicago from 2001 to October 2016.
 
-We first prepare the data, creating, transforming and cleaning the variables we are interested in. Then, we perform the statistical analysis through line graphs, bar graphs and heat-maps which will answer each of our research questions. 
+To perform the analysis, we first prepared the data. For this, we created, transformed and cleaned the variables we considered relevant. Then, we plotted these variables through line, bar graphs and heat-maps. Finally, the interpretation of these visualisations led us the answer our questions. 
+
+The whole process was done using the software `R` and `Rmarkdown`, and it is reproducible based on code. 
 
 ## Results
 
 ### Data preparation
 
-First, we activate the libraries we will need to set up the project.
+First, we activated the libraries needed to set up the project.
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Activate libraries
@@ -30,10 +34,9 @@ library(ggplot2)
 library(lubridate)
 library(zoo)
 library(dplyr)
-library(knitr)
 ```
 
-Second, we load the data into the `R` environment.
+Second, we loaded the data into the `R` environment.
 
 ```{r eval=TRUE, echo=TRUE}
 # Read csv in R
@@ -42,7 +45,7 @@ dd=read.csv("http://www1.maths.leeds.ac.uk/~charles/math5741/crime.csv",header=T
 
 \pagebreak
 
-Third, we create two new variables `Count` and `Hour` and make some necessary transformations in date variables in order to make `R` understand them. 
+Third, we created two new variables,`Count` and `Hour`, and made some transformations in the `Date` variable format in order to make `R` understand it right. 
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Create a variable count with value 1
@@ -55,7 +58,7 @@ dd$Hour <- substring(dd$Date, 12,13)
 dd$Date <- as.Date(dd$Date, format="%m/%d/%Y")
 ```
 
-Fourth, we group in larger categories the existent ones in the variables `Primary.Type` and `Location.Description`, and call them `Type_grouped` and `Location_grouped` respectively.
+Fourth, we grouped the existent categories in the variables `Primary.Type` and `Location.Description` in larger ones, and called them `Type_grouped` and `Location_grouped` respectively.
 
 ```{r, include=FALSE}
 # Group Primary.Type categories
@@ -99,14 +102,14 @@ dd$Location_grouped[dd$Location.Description == "TRAILER" | dd$Location.Descripti
 dd$Location_grouped[dd$Location.Description == "CTA GARAGE / OTHER PROPERTY" | dd$Location.Description =="DRIVEWAY - RESIDENTIAL" | dd$Location.Description =="GARAGE" | dd$Location.Description =="HOUSE" | dd$Location.Description == "PORCH" | dd$Location.Description =="RESIDENCE" | dd$Location.Description == "RESIDENCE PORCH/HALLWAY"| dd$Location.Description == "RESIDENCE-GARAGE"| dd$Location.Description == "RESIDENTIAL YARD (FRONT/BACK)"| dd$Location.Description == "YARD"]<- "Residence"
 ```
 
-The next step is to drop all those columns we do not need to answer our research questions.
+The next step was to drop all those columns we did not need to answer our research questions.
 
 ```{r, echo=TRUE}
 # Drop all variables we are not interested in
 dd <- dd[, -c(1:2, 4:11, 13:15, 17:18)]
 ```
 
-Then, we clean the dataset of missing values and remove all values from 2016 - this last year is not complete.
+Then, we cleaned the dataset of missing values and removed all values from 2016 as this last year was not complete.
 
 ```{r, echo=TRUE}
 # Remove NAs
@@ -115,18 +118,18 @@ dd <- dd[complete.cases(dd),]
 dd <- dd[!dd$Year > 2015,]
 ```
 
-Finally, we show the the dataset ready for exploration.
+Finally, here we can see an abstract of the final dataset ready for exploration.
 
 ```{r, echo=TRUE}
 # Show first 5 records
 head(dd)
 ```
 
-### Data exploration 
+### Data exploration
 
 #### How has crime evolved over time in the city of Chicago?  
 
-To answer the first question we plot the number of crimes per year from 2001 to 2015 (Figure 1). The graph shows that crime in the city of Chicago has been decreasing year after year, with a continuous decline. 
+To answer the first question we plotted Figures 1 and 2. Figure 1 shows the number of crimes per year from 2001 to 2015. As it can be seen in the graph, crime in the city of Chicago has been decreasing year after year, with a clear and continuous decline. 
 
 ```{r fig, fig.cap="Crimes evolution 2001-2015", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Create aggregated object
@@ -135,7 +138,7 @@ dd_aggr <- aggregate(Count ~ Year, data = dd, FUN = sum)
 ggplot(dd_aggr, aes(x=Year, y= Count)) + geom_line(colour = "steelblue") + geom_point(colour = "steelblue") + theme_minimal() + theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank()) 
 ```
 
-Figure 2 depicts the annual frequency of crimes per type and their trend. The most common types of crime are Theft and Batery. All types have been falling to a greater or lesser extent. 
+Figure 2 depicts the same information as the previous one but dividing the crimes by type. From the graph it is clear that the most common types of crimes over the whole period of time are Theft and Batery; and that all type of crimes have been falling since 2001 to a greater or lesser extent. 
 
 ```{r fig2, fig.cap="Crimes evolution per type of crime 2001-2015", echo=FALSE, message=FALSE, warning=FALSE, out.extra='',fig.align='center'}
 # Create aggregated object
@@ -147,16 +150,16 @@ ggplot(data=dd_aggr2, aes(x=Year, y=Count, group = Type_grouped, colour = Type_g
 
 \pagebreak
 
-#### What time of day do most crime occur?
+#### What time of day does most crime occur?
 
-The following bar graph (Figure 3) shows the number of crimes increases gradually from 05:00 in the morning (the hour with less crimes) until 20:00 in the evening (the hour with the most crimes). The hours of 12:00 and 00:00 are exceptionally high, at a similar level as 20:00.
+Figures 3 and 4 lead us to anwer question 2. Figure 3 indicates that the number of crimes increases gradually from 05:00 in the morning (the hour with less crimes) until 20:00 in the evening (the hour with the most crimes). The hours of 12:00 and 00:00 are exceptionally high, both at a similar level as 20:00.
 
 ```{r, fig3, fig.cap="Crimes per hour", echo=FALSE, out.extra='',fig.align='center'}
 # Plot the graph 
 ggplot(dd, aes(x=Hour))+geom_bar(stat="Count", width=0.8, fill = "steelblue")+ theme(axis.text.x = element_text(angle = 0, hjust = 1)) + labs(x = "Hour", y = "Number of crimes") + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
 ```
 
-The heat-map in Figure 4 shows the distribution of number of crimes per hour and type. For example, we can see that the peak hours of Theft and Others are at 00:00, 09:00 and 12:00. Narcotics concentrate between 10:00 to 14:00 and 19:00 to 22:00. Other types are more evenly distributed throughout the day.
+Figure 4 shows in a heat-map the distribution of number of crimes per hour and type. From this visualisaition we can highlight, for example, that whereas the peak hours of Theft and Others are at 00:00, 09:00 and 12:00, Narcotics concentrate between 10:00 to 14:00 and 19:00 to 22:00. Other types of crime are more evenly distributed throughout the day.
 
 ```{r fig4, fig.cap="Type of crime vs hour", echo=FALSE, out.extra='', fig.align='center'}
 # Create aggregated object
@@ -175,7 +178,7 @@ p1 + theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=e
 
 #### In which locations of the city is crime more likely to happen? 
 
-As is illustrated by Figure 5, most crimes happen in the street, followed by Residences and Apartments.
+Figure 5 and 6 indicate the location of crime. As is illustrated by Figure 5, most crimes happen in the Street, followed by Residences and Apartments.
 
 ```{r fig5, fig.cap="Crimes per location", echo=FALSE, out.extra='',fig.align='center'}
 # Create aggregated object
@@ -186,7 +189,7 @@ dd_aggr4$Location_grouped <- factor(dd_aggr4$Location_grouped, levels = dd_aggr4
 ggplot(dd_aggr4, aes(x = Location_grouped, y = Count)) + theme_minimal() + geom_bar(stat="identity", width=0.7, fill = "steelblue") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "Location", y = "Number of crimes")+ theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
 ```
 
-If we visualise the distribution of crimes per location and type (Figure 6), we can see that some types occur in specific locations. For instance, Robery is recorded almost enterily in the Street, as well as Narcotics. However, Burglary and Others are registered particularly in Reseidences or Apartments. What makes sense.
+Figure 6, shows that some types of crime tend to occur in specific locations. For instance, Robery is recorded almost entirely in the Street, as well as Narcotics. However, Burglary and Others are registered particularly in Residences or Apartments - What makes sense.
 
 ```{r fig6, fig.cap="Type of crime vs location", echo=FALSE, out.extra='',fig.align='center'}
 # Create aggregated object
@@ -205,7 +208,7 @@ p2+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=el
 
 #### Which districts are more potentially dangerous?
 
-Finally, in Figure 7, we visualise the number of crimes per districts. The most dangerous district seems number 8, with more than 30,000 records in the 15 years, while district 20 with less than 10,000 seems the safest. 
+Finally, Figure 7 and 8 gives us the anwer for the last question. In Figure 7 we visualise the number of crimes per districts. The most dangerous district seems to be number 8, with more than 30,000 records in the 15 years, while district 20 with less than 10,000 seems the safest. 
 
 ```{r fig7, echo=FALSE, fig.cap="Crimes per district"}
 # Remove values districts 21 and 31
@@ -219,7 +222,7 @@ dd_aggr6$District <- factor(dd_aggr6$District, levels = dd_aggr6$District[order(
 ggplot(dd_aggr6, aes(x=District, y = Count)) + theme_minimal() + geom_bar(stat="identity", width=0.7, fill = "steelblue") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(x = "District", y = "Number of crimes") + theme(axis.title.x=element_blank()) + theme(axis.title.y=element_blank())
 ```
 
-Figure 8 ilustrates some interesting findings in the relations between the type of crime and districts where they occurred. For example, we can see that districts 1, 8, 12 and 18 are particularly dangerous in terms of Theft, that districts 7 and 11 stand out in terms of Batery, but above all that Narcotics crime concentrates in district 11 and 15.
+Figure 8 illustrates some interesting findings in the relations between the type of crime and districts where they occurred. For example, we can see that districts 1, 8, 12 and 18 are particularly dangerous in terms of Theft, that districts 7 and 11 stand out in terms of Batery, and how clearly Narcotics crime concentrates in district 11 and 15.
 
 ```{r fig8, fig.cap="Type of crime vs district", echo=FALSE, out.extra='',fig.align='center'}
 # Create aggregated object
@@ -234,6 +237,3 @@ p3+ theme_minimal()+ theme(axis.title.x=element_blank()) + theme(axis.title.y=el
         axis.text.y = element_text(size= 8),
         axis.text.x = element_text(size = 8, angle = 45, hjust = 1)) 
 ```
-
-
-
