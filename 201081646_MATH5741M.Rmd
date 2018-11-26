@@ -1,7 +1,13 @@
 ---
-title: "Crime in Chicago: A Data Analysis Summary using R"
-author: 'Student ID: 201081646'
+title: 'Crime in Chicago: A Data Analysis Summary using R'
+author: 'Eugeni Vidal'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
   pdf_document:
     fig_caption: yes
     fig_crop: yes
@@ -10,14 +16,10 @@ output:
     keep_tex: yes
     number_sections: yes
     toc_depth: 2
-  html_document:
-    fig_caption: yes
-    theme: journal
+  word_document:
     toc: yes
-    toc_depth: 2
-header-includes:
- \usepackage{float}
- \floatplacement{figure}{H}
+    toc_depth: '2'
+header-includes: \usepackage{float} \floatplacement{figure}{H}
 ---
 ```{r, include=FALSE}
 knitr::opts_chunk$set(fig.pos = 'H')
@@ -57,7 +59,7 @@ library(zoo)
 library(dplyr)
 library(knitr)
 ```
-
+    
 Second, we load the data into the `R` environment.
 
 ```{r eval=TRUE, echo=TRUE}
